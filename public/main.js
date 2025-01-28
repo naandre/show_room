@@ -1,10 +1,11 @@
 
-import { getGenres, getTopRated, genresNames, saveFavorites } from "./api.js";
-
+// const api = require("./api");
+// { getGenres, getTopRated, genresNames, saveFavorites } 
 const IMAGE_PREFIX_URL = 'https://image.tmdb.org/t/p/w220_and_h330_face/';
-const genresMovies = await getGenres("movie");
-const genresTV = await getGenres("tv");
+let genresMovies;
+let genresTV;
 
+// window[saveFavorites];
 const loadHead = async () => {
     const head = document.getElementById("header");
     head.innerHTML = `
@@ -29,7 +30,10 @@ const loadHead = async () => {
     </nav>
     <div id="fav">
         <i class="fa-solid fa-house" id="home"></i>
-        <i class="fa-solid fa-clapperboard"></i>
+        <div class="favorites">
+            <i class="fa-solid fa-clapperboard"></i>
+            <div id="counterFav" class="counter"><div>
+        </div>
     </div>`;
     document.getElementById("home").addEventListener("click", () => {
         window.location = "index.html";
@@ -52,20 +56,22 @@ const drawList = (list, page) => {
     </ul>`
 }
 
+
+
 const drawTopRateds = async (type) => {
     const containerTopRateds = document.getElementById(`rated-${type}`);
     const cards = [];
     const topRatedElements = await getTopRated(type);
     topRatedElements.forEach(element => {
-        let strGenresNames = genresNames(element.genre_ids, type).join(", ");
+        let strgenresNames = genresNames(element.genre_ids, type).join(", ");
         let card = `
         <div class="card" id="${type}_${element.id}">
-            <div class="img-show" onclick="saveFavorites(${element.id}, '${type}')">
+            <div class="img-show" onclick="processFavorites(${element.id}, '${type}'); return false;">
                 <img src="${IMAGE_PREFIX_URL}${element.backdrop_path}" alt="${element.title || element.name}"/>
                 <i class="fa-regular fa-heart"></i>
             </div>
             <span class="date-release">${element.release_date || element.first_air_date}</span>
-            <h5 class="card-genres" title="${strGenresNames}">${strGenresNames}</h5>
+            <h5 class="card-genres" title="${strgenresNames}">${strgenresNames}</h5>
             <h3 class="title-element">${element.title || element.name}</h3>
         </div>
         `;
@@ -100,12 +106,34 @@ const loadFooter = () => {
     `;
 }
 
+const processFavorites = async (id = undefined, type = undefined) => {
+    if (id && type)
+        await saveFavorites(id, type);
+    let favorites = await getFavorites();
+    const divFavorite = document.getElementById("counterFav");
+    divFavorite.innerText = favorites.length;
+    favorites.forEach(favElement => {
+        const card = document.getElementById(`${favElement.type}_${favElement.id}`);
+        const btnFav = card.querySelector("i");
+        btnFav.classList.remove("fa-regular");
+        btnFav.classList.add("fa-solid");
+    });
+}
+
+const initValues = async () => {
+    genresMovies = await getGenres("movie");
+    genresTV = await getGenres("tv");
+    loadHead();
+    loadFooter();
+    await drawTopRateds('movie');
+    await drawTopRateds('tv');
+    await processFavorites();
+}
+initValues();
 
 
 
 
 
-loadHead();
-loadFooter();
-drawTopRateds('movie');
-drawTopRateds('tv');
+
+

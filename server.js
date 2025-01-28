@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import axios from 'axios';
 import dotenv from 'dotenv';
+import fs from 'fs'
 
 dotenv.config();
 const app = express();
@@ -17,28 +18,66 @@ app.use(express.static('public'));
 app.get("/genres/:genreType", async (req, res) => {
     try {
         let result = await instance_api.get(`genre/${req.params.genreType}/list?language=en`);
-        res.end(JSON.stringify(result.data));
+        if (!result.status == 200)
+            res.status(result.status).send(JSON.stringify(result))
+        res.status(200).send(JSON.stringify(result.data));
     } catch (error) {
-        res.status(500).send("Error al cargar las categorias", error)
+        let msg = error?.response?.data?.status_message ?? "Error loading categories";
+        res.status(error.status).send(msg);
     }
 });
 
 app.get("/top_rated/:type", async (req, res) => {
     try {
         let result = await instance_api.get(`${req.params.type}/top_rated?language=en-US&page=1`);
-        res.end(JSON.stringify(result.data));
+        res.status(200).send(JSON.stringify(result.data));
     } catch (error) {
-        res.status(500).send("Error al cargar el contenido", error)
+        let msg = error?.response?.data?.status_message ?? "Error loading content";
+        res.status(error.status).send(msg);
     }
 });
 
 app.post("/favorites", async (req, res) => {
     try {
-        console.log(req.body);
+        let favoriteReq = req.body;
+        let favorites = [];
+        let response = fs.readFileSync('./data/favorites.js', 'utf-8', (err, data) => {
+            if (err) throw err;
+            return JSON.parse(data);
+        }).toString();
+        favorites = JSON.parse(response);
+        favorites.push(favoriteReq);
+        fs.writeFileSync("./data/favorites.js", JSON.stringify(favorites), 'utf-8', (err) => {
+            if (err) {
+                console.log("Error writting to file", err);
+            }
+            else {
+                console.log("Data Written to file");
+            }
+        })
+        res.status(200).send({
+            message: 'New user was added to the list',
+        });
     } catch (error) {
-
+        let msg = error?.response?.data?.status_message ?? "Error saving favorites";
+        console.log(error);
+        res.status(error?.status ?? 500).send(msg);
     }
 });
+
+app.get("/favorites", async (req, res) => {
+    try {
+        let response = fs.readFileSync('./data/favorites.js', 'utf-8', (err, data) => {
+            if (err) throw err;
+            return JSON.parse(data);
+        }).toString();
+        res.status(200).send(response);
+    } catch (error) {
+        let msg = error?.response?.data?.status_message ?? "Error getting favorites";
+        console.log(error);
+        res.status(error?.status ?? 500).send(msg);
+    }
+})
 
 app.listen(process.env.PORT, () => {
     console.log("Server started on http://localhost:3000");
