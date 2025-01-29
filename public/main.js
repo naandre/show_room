@@ -68,7 +68,7 @@ const drawTopRateds = async (type) => {
         <div class="card" id="${type}_${element.id}">
             <div class="img-show" onclick="processFavorites(${element.id}, '${type}'); return false;">
                 <img src="${IMAGE_PREFIX_URL}${element.backdrop_path}" alt="${element.title || element.name}"/>
-                <i class="fa-regular fa-heart"></i>
+                <i class="fa-regular fa-bookmark"></i>
             </div>
             <span class="date-release">${element.release_date || element.first_air_date}</span>
             <h5 class="card-genres" title="${strgenresNames}">${strgenresNames}</h5>
@@ -93,10 +93,10 @@ const loadFooter = () => {
                         target="_blank"><i class="fa fa-facebook icon"
                             aria-hidden="true"></i></a>
                     <a href="https://www.twitter.com/" class="btn btn-circle"
-                        target="_blank"><i class="fa fa-twitter icon"
+                        target="_blank"><i class="fa-brands fa-x-twitter icon"
                             aria-hidden="true"></i></a>
-                    <a href="https://www.google.com/" class="btn btn-circle"
-                        target="_blank"><i class="fa fa-google-plus icon"
+                    <a href="https://www.instagram.com/" class="btn btn-circle"
+                        target="_blank"><i class="fa-brands fa-instagram icon"
                             aria-hidden="true"></i></a>
                     <span class="btn btn-circle"><i
                             class="fa-solid fa-xmark icon"></i></span>
@@ -107,17 +107,27 @@ const loadFooter = () => {
 }
 
 const processFavorites = async (id = undefined, type = undefined) => {
-    if (id && type)
-        await saveFavorites(id, type);
+    if (id && type) {
+        let favorite = await getFavoriteById(id, type);
+        if (!favorite)
+            await saveFavorites(id, type);
+        else {
+            await deleteFavorite(id, type);
+            changeStyleFav(favorite, "fa-solid", "fa-regular");
+        }
+    }
     let favorites = await getFavorites();
     const divFavorite = document.getElementById("counterFav");
     divFavorite.innerText = favorites.length;
     favorites.forEach(favElement => {
-        const card = document.getElementById(`${favElement.type}_${favElement.id}`);
-        const btnFav = card.querySelector("i");
-        btnFav.classList.remove("fa-regular");
-        btnFav.classList.add("fa-solid");
+        changeStyleFav(favElement, "fa-regular", "fa-solid");
     });
+}
+const changeStyleFav = (favElement, styleOld, styleNew) => {
+    const card = document.getElementById(`${favElement.type}_${favElement.id}`);
+    const btnFav = card.querySelector("i");
+    btnFav.classList.remove(styleOld);
+    btnFav.classList.add(styleNew);
 }
 
 const initValues = async () => {

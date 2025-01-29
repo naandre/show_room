@@ -59,12 +59,48 @@ const saveFavorites = async (id, type) => {
     }
 }
 
+const deleteFavorite = async (id, type) => {
+    try {
+        let elementResume = {
+            id: id,
+            type: type
+        }
+        let deletedResponse = await fetch("favorites", {
+            body: JSON.stringify(elementResume),
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        });
+        if (!savedResponse.ok)
+            throw new Error(`Response status: ${savedResponse.status}`);
+        const json = await savedResponse.json();
+        console.log(json);
+        return json;
+    } catch (error) {
+        console.error(error.message);
+        return "";
+    }
+}
+
 const getFavorites = async () => {
     try {
         let result = await fetch("favorites");
         if (!result.ok)
             throw new Error(`Response status: ${savedResponse.status}`);
         return await result.json();
+    } catch (error) {
+        console.error(error)
+        return "";
+    }
+}
+
+const getFavoriteById = async (id, type) => {
+    try {
+        let result = await fetch(`favorites/${id}/${type}`);
+        if (!result.ok)
+            throw new Error(`Response status: ${savedResponse.status}`);
+        return result.status == 200 ? await result.json() : false;
     } catch (error) {
         console.error(error)
         return "";
