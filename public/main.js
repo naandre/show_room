@@ -65,10 +65,10 @@ const drawTopRateds = async (type) => {
     topRatedElements.forEach(element => {
         let strgenresNames = genresNames(element.genre_ids, type).join(", ");
         let card = `
-        <div class="card" id="${type}_${element.id}">
-            <div class="img-show" onclick="processFavorites(${element.id}, '${type}'); return false;">
+        <div class="card" id="${type}_${element.id}" onclick="goToDetail(${element.id}, '${type}')">
+            <div class="img-show">
                 <img src="${IMAGE_PREFIX_URL}${element.backdrop_path}" alt="${element.title || element.name}"/>
-                <i class="fa-regular fa-bookmark"></i>
+                <i class="fa-regular fa-bookmark" onclick="event.stopPropagation(); processFavorites(${element.id}, '${type}'); return false;"></i>
             </div>
             <span class="date-release">${element.release_date || element.first_air_date}</span>
             <h5 class="card-genres" title="${strgenresNames}">${strgenresNames}</h5>
@@ -81,6 +81,10 @@ const drawTopRateds = async (type) => {
     <div class="carousel animated">
     ${cards.join(" ")}
     </div>`;
+}
+
+const goToDetail = (id, type) => {
+    window.location.href = `detail.html?id=${id}&type=${type}`
 }
 
 const loadFooter = () => {
@@ -107,6 +111,7 @@ const loadFooter = () => {
 }
 
 const processFavorites = async (id = undefined, type = undefined) => {
+    let isIndex = window.location.href.includes("index");
     if (id && type) {
         let favorite = await getFavoriteById(id, type);
         if (!favorite)
@@ -119,9 +124,10 @@ const processFavorites = async (id = undefined, type = undefined) => {
     let favorites = await getFavorites();
     const divFavorite = document.getElementById("counterFav");
     divFavorite.innerText = favorites.length;
-    favorites.forEach(favElement => {
-        changeStyleFav(favElement, "fa-regular", "fa-solid");
-    });
+    if (isIndex)
+        favorites.forEach(favElement => {
+            changeStyleFav(favElement, "fa-regular", "fa-solid");
+        });
 }
 const changeStyleFav = (favElement, styleOld, styleNew) => {
     const card = document.getElementById(`${favElement.type}_${favElement.id}`);
@@ -130,16 +136,57 @@ const changeStyleFav = (favElement, styleOld, styleNew) => {
     btnFav.classList.add(styleNew);
 }
 
-const initValues = async () => {
+const loadDetails = async () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    let id = urlParams.get("id");
+    let type = urlParams.get("type");
+    const main = document.getElementsByTagName("main")[0];
+    let entertainmentItem = await getEntertainmentItemByIdType(id, type);
+    if (!entertainmentItem)
+        return;
+    let strgenresNames = entertainmentItem.genres.map(genre => genre.name).join(", ");
+    main.innerHTML = `
+    <div class="img-entertainment">
+        <img src="${IMAGE_PREFIX_URL}${entertainmentItem.backdrop_path}" alt="${entertainmentItem.title || entertainmentItem.name}"/>
+    </div>
+    <div class="detail">
+        <h3>${entertainmentItem.title || entertainmentItem.name}</h3>
+        <span "date-release">${entertainmentItem.release_date || entertainmentItem.first_air_date}</span>
+        <h5 class="card-genres" title="${strgenresNames}">${strgenresNames}</h5>
+        <span>${entertainmentItem.overview}</span>
+        <iframe id="video" width="300" height="200" 
+        src="https://www.youtube.com/embed/qEtuz1ktxeA?autoplay=1&cc_load_policy=1&controls=0&mute=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay"></iframe>
+    </div>
+    `
+    document.getElementById("video").addEventListener("mouseover", () => {
+        let iframe = this.event.target;
+        let url = iframe.getAttribute("src").replace("mute=0", "mute=1");
+        iframe.setAttribute("src", url);
+    });
+    document.getElementById("video").addEventListener("mouseleave", () => {
+        let iframe = this.event.target;
+        let url = iframe.getAttribute("src").replace("mute=1", "mute=0");
+        iframe.setAttribute("src", url);
+    });
+}
+
+window.addEventListener("load", async () => {
+    const url = window.location.href;
     genresMovies = await getGenres("movie");
     genresTV = await getGenres("tv");
     loadHead();
     loadFooter();
-    await drawTopRateds('movie');
-    await drawTopRateds('tv');
+    if (url.includes("index")) {
+        await drawTopRateds('movie');
+        await drawTopRateds('tv');
+    }
+    else if (url.includes("detail")) {
+        loadDetails();
+    }
     await processFavorites();
-}
-initValues();
+
+
+});
 
 
 

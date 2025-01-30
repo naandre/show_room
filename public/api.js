@@ -72,9 +72,9 @@ const deleteFavorite = async (id, type) => {
                 "Content-Type": "application/json",
             }
         });
-        if (!savedResponse.ok)
-            throw new Error(`Response status: ${savedResponse.status}`);
-        const json = await savedResponse.json();
+        if (!deletedResponse.ok)
+            throw new Error(`Response status: ${deletedResponse.status}`);
+        const json = await deletedResponse.json();
         console.log(json);
         return json;
     } catch (error) {
@@ -87,7 +87,7 @@ const getFavorites = async () => {
     try {
         let result = await fetch("favorites");
         if (!result.ok)
-            throw new Error(`Response status: ${savedResponse.status}`);
+            throw new Error(`Response status: ${result.status}`);
         return await result.json();
     } catch (error) {
         console.error(error)
@@ -99,10 +99,21 @@ const getFavoriteById = async (id, type) => {
     try {
         let result = await fetch(`favorites/${id}/${type}`);
         if (!result.ok)
-            throw new Error(`Response status: ${savedResponse.status}`);
+            throw new Error(`Response status: ${result.status}`);
         return result.status == 200 ? await result.json() : false;
     } catch (error) {
         console.error(error)
         return "";
+    }
+}
+
+const getEntertainmentItemByIdType = async (id, type) => {
+    try {
+        let result = await fetch(`entertainment/${id}/${type}`);
+        if (!result.ok)
+            throw new Error(`Response status: ${result.status}`);
+        return await result.json();
+    } catch (error) {
+
     }
 }

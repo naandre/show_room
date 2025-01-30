@@ -241,6 +241,7 @@ nav ul li {
     /* flex: 5em; */
     height: 15em;
     border-radius: 5px;
+    object-fit: contain;
 }
 
 @keyframes slide {
@@ -444,4 +445,21 @@ nav ul li {
             -ms-user-select: none;
         }
     }
+}
+
+.container-detail {
+    display: grid;
+    grid-template-areas: "img detail detail"
+        "img detail detail";
+    grid-template-rows: 1fr 1fr;
+    grid-template-columns: repeat(3, 1fr);
+    height: 100%;
+}
+
+.container-detail .img-entertainment {
+    grid-area: img;
+}
+
+.container-detail .detail {
+    grid-area: detail;
 }
