@@ -32,9 +32,13 @@ const loadHead = async () => {
         <i class="fa-solid fa-house" id="home"></i>
         <div class="favorites">
             <i class="fa-solid fa-clapperboard"></i>
-            <div id="counterFav" class="counter"><div>
+            <div id="counterFav" class="counter"></div>
         </div>
-    </div>`;
+    </div>
+    <div class="search__container">
+        <input class="search__input" type="text" placeholder="Search">
+    </div>
+    `;
     document.getElementById("home").addEventListener("click", () => {
         window.location = "index.html";
     });
@@ -145,7 +149,11 @@ const loadDetails = async () => {
     if (!entertainmentItem)
         return;
     let strgenresNames = entertainmentItem.genres.map(genre => genre.name).join(", ");
-    main.innerHTML = `
+    let entertainmentVideos = await getEntertainmentVideosByIdType(id, type);
+    let videos = entertainmentVideos.results.filter(x => x.site == "YouTube")
+    let randomIndex = Math.floor(Math.random() * videos.length ?? 0);
+    let randomVideo = videos && videos.length > 0 ? videos[randomIndex] : undefined;
+    let htmlDetails = `
     <div class="img-entertainment">
         <img src="${IMAGE_PREFIX_URL}${entertainmentItem.backdrop_path}" alt="${entertainmentItem.title || entertainmentItem.name}"/>
     </div>
@@ -153,34 +161,31 @@ const loadDetails = async () => {
         <h3>${entertainmentItem.title || entertainmentItem.name}</h3>
         <span "date-release">${entertainmentItem.release_date || entertainmentItem.first_air_date}</span>
         <h5 class="card-genres" title="${strgenresNames}">${strgenresNames}</h5>
-        <span>${entertainmentItem.overview}</span>
-        <iframe id="video" width="300" height="200" 
-        src="https://www.youtube.com/embed/qEtuz1ktxeA?autoplay=1&cc_load_policy=1&controls=0&mute=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay"></iframe>
+        <span>${entertainmentItem.overview}</span>`;
+    if (randomVideo) {
+        htmlDetails += `
+        <div class="video-container">
+            <iframe id="video" width="350" height="250" 
+            src="https://www.youtube.com/embed/${randomVideo.key}?autoplay=1&cc_load_policy=1&controls=0&mute=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allow="autoplay"></iframe>
+        </div>`
+    }
+    htmlDetails += `    
     </div>
     `
-    document.getElementById("video").addEventListener("mouseover", () => {
-        let iframe = this.event.target;
-        let url = iframe.getAttribute("src").replace("mute=0", "mute=1");
-        iframe.setAttribute("src", url);
-    });
-    document.getElementById("video").addEventListener("mouseleave", () => {
-        let iframe = this.event.target;
-        let url = iframe.getAttribute("src").replace("mute=1", "mute=0");
-        iframe.setAttribute("src", url);
-    });
+    main.innerHTML = htmlDetails;
 }
 
 window.addEventListener("load", async () => {
-    const url = window.location.href;
+    const path = window.location.pathname;
     genresMovies = await getGenres("movie");
     genresTV = await getGenres("tv");
     loadHead();
     loadFooter();
-    if (url.includes("index")) {
+    if (path === "/" || path.includes("index")) {
         await drawTopRateds('movie');
         await drawTopRateds('tv');
     }
-    else if (url.includes("detail")) {
+    else if (path.includes("detail")) {
         loadDetails();
     }
     await processFavorites();

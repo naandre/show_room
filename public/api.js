@@ -117,3 +117,14 @@ const getEntertainmentItemByIdType = async (id, type) => {
 
     }
 }
+
+const getEntertainmentVideosByIdType = async (id, type) => {
+    try {
+        let result = await fetch(`entertainment/videos/${id}/${type}`);
+        if (!result.ok)
+            throw new Error(`Response status: ${result.status}`);
+        return await result.json();
+    } catch (error) {
+
+    }
+}

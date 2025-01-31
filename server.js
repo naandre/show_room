@@ -144,6 +144,19 @@ app.get("/entertainment/:id/:type", async (req, res) => {
     }
 });
 
+app.get("/entertainment/videos/:id/:type", async (req, res) => {
+    const { id, type } = req.params;
+    try {
+        let result = await instance_api.get(`${type}/${id}/videos?language=en-US`);
+        if (!result.status == 200)
+            res.status(result.status).send(JSON.stringify(result))
+        res.status(200).send(JSON.stringify(result.data));
+    } catch (error) {
+        let msg = error?.response?.data?.status_message ?? `Error loading ${type}`;
+        res.status(error.status).send(msg);
+    }
+});
+
 app.listen(process.env.PORT, () => {
     console.log("Server started on http://localhost:3000");
 })
