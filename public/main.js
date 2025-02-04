@@ -34,6 +34,7 @@ const loadHead = async () => {
             <i class="fa-solid fa-clapperboard"></i>
             <div id="counterFav" class="counter"></div>
         </div>
+        <i class="fa-solid fa-user"></i>
     </div>
     <div class="search__container">
         <input class="search__input" type="text" placeholder="Search">
@@ -115,7 +116,7 @@ const loadFooter = () => {
 }
 
 const processFavorites = async (id = undefined, type = undefined) => {
-    let isIndex = window.location.href.includes("index");
+    let isIndex = window.location.pathname.includes("index") || window.location.pathname === "/";
     if (id && type) {
         let favorite = await getFavoriteById(id, type);
         if (!favorite)
