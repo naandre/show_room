@@ -34,7 +34,7 @@ const loadHead = async () => {
             <i class="fa-solid fa-clapperboard"></i>
             <div id="counterFav" class="counter"></div>
         </div>
-        <i class="fa-solid fa-user"></i>
+        <div id="login"><i class="fa-solid fa-user"></i></div>
     </div>
     <div class="search__container">
         <input class="search__input" type="text" placeholder="Search">
@@ -190,9 +190,33 @@ window.addEventListener("load", async () => {
         loadDetails();
     }
     await processFavorites();
-
+    loadLogin();
 
 });
+
+const loadLogin = () => {
+    const containerLogin = document.getElementById("login");
+    const divLogin = document.createElement("div");
+    divLogin.id = "divLogin";
+    divLogin.className = "popUpLogin";
+    divLogin.innerHTML = `
+    <h4>Login</h4>
+    <form id="frm-login" method="POST">
+        <div class="field-form">
+            <label for="userName">User</label>
+            <input type="text" id="userName" name="userName" required/>
+        </div>
+        <div class="field-form">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required/>
+        </div>
+        <button type="submit" id="btn-login">Sign In</button>
+    </form>
+    <a href="#">Forgot password?</a>
+    <p>New to Show Room <a href="register.html">Register</a></p>
+    `;
+    containerLogin.appendChild(divLogin);
+}
 
 
 

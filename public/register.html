@@ -9,9 +9,49 @@
             crossorigin="anonymous"></script>
         <script src="api.js"></script>
     </head>
-    <body>
+    <body id="body-register">
         <header id="header"></header>
-        <main></main>
+        <main id="main-register">
+            <h2>Register</h2>
+            <form method="post" id="register-form">
+                <div class="field-form">
+                    <label for="name">Name</label>
+                    <input type="text" name="name" id="name" required>
+                </div>
+                <div class="field-form">
+                    <label for="lastName">Last Name</label>
+                    <input type="text" name="lastName" id="lastName" required>
+                </div>
+                <div class="field-form">
+                    <label for="email">Email</label>
+                    <input type="email" name="email" id="email" required>
+                </div>
+                <div class="field-form">
+                    <label for="email">Username</label>
+                    <input type="text" name="username" id="username" required>
+                </div>
+                <div class="field-form">
+                    <label for="password">Password</label>
+                    <input type="password" name="password" id="password"
+                        required>
+                </div>
+                <div class="field-form">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" name="confirmPassword"
+                        id="confirmPassword" required>
+                </div>
+                <div class="field-form">
+                    <label for="profile_image">Photo</label>
+                    <div class="img-profile">
+                        <i class="fa-solid fa-camera"></i>
+                        <input type="file" name="profile_image"
+                            id="profile_image">
+                        <img src alt id="prev_profile_img">
+                    </div>
+                </div>
+                <button type="submit" id="btn-register">Register</button>
+            </form>
+        </main>
         <footer></footer>
         <script src="main.js"></script>
     </body>
