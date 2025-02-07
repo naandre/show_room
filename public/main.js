@@ -1,5 +1,6 @@
 
 // const api = require("./api");
+
 // { getGenres, getTopRated, genresNames, saveFavorites } 
 const IMAGE_PREFIX_URL = 'https://image.tmdb.org/t/p/w220_and_h330_face/';
 let genresMovies;
@@ -189,10 +190,34 @@ window.addEventListener("load", async () => {
     else if (path.includes("detail")) {
         loadDetails();
     }
+    else if (path.includes("register")) {
+        document.getElementById("inputPassword").addEventListener("input", () => validatePaswords());
+        document.getElementById("inputConfirmPassword").addEventListener("input", () => validatePaswords());
+        document.getElementById("div-photoRegister").addEventListener("click", () => getPhoto());
+        document.getElementById("profile_image").addEventListener("change", () => getFileName());
+        document.getElementById("register-form").addEventListener("submit", (e) => saveUser(e));
+    }
     await processFavorites();
     loadLogin();
 
 });
+
+
+var saveUser = async (event) => {
+    event.preventDefault();
+    const form = document.getElementById("register-form");
+    const formData = new FormData(form);
+    const formProps = Object.fromEntries(formData);
+    let results = await registerUser(formProps);
+    console.log(results);
+}
+
+var getPhoto = () => {
+    document.getElementById("profile_image").click();
+}
+var getFileName = () => {
+    document.getElementById("prev_profile_img").src = window.URL.createObjectURL(document.getElementById("profile_image").files[0]);
+}
 
 const loadLogin = () => {
     const containerLogin = document.getElementById("login");
@@ -216,6 +241,18 @@ const loadLogin = () => {
     <p>New to Show Room <a href="register.html">Register</a></p>
     `;
     containerLogin.appendChild(divLogin);
+}
+
+const validatePaswords = () => {
+    const password = document.getElementById("inputPassword");
+    const confirmPassword = document.getElementById("inputConfirmPassword");
+    const parentCFP = confirmPassword.parentElement;
+    if (password.value === confirmPassword.value) {
+        parentCFP.getElementsByClassName("error-password")[0].classList.remove("show");
+        return;
+    }
+
+    parentCFP.getElementsByClassName("error-password")[0].classList.add("show");
 }
 
 

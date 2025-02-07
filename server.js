@@ -3,7 +3,6 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 import * as dataBase from './database.js';
-import UserController from './controllers/userController.js';
 import { entertainmentRoute, genresRoute, userRoute, favoritesRoute, topRatedRoute } from './routes/index.js';
 global.db = dataBase;
 
@@ -11,7 +10,6 @@ dotenv.config();
 const app = express();
 const __dirname = path.resolve();
 
-const userController = new UserController(db);
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));

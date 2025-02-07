@@ -114,7 +114,8 @@ const getEntertainmentItemByIdType = async (id, type) => {
             throw new Error(`Response status: ${result.status}`);
         return await result.json();
     } catch (error) {
-
+        console.error("");
+        return "";
     }
 }
 
@@ -125,6 +126,22 @@ const getEntertainmentVideosByIdType = async (id, type) => {
             throw new Error(`Response status: ${result.status}`);
         return await result.json();
     } catch (error) {
+        console.error(error);
+        return "";
+    }
+}
 
+const registerUser = async (userForm) => {
+    try {
+        let result = await fetch("user", {
+            method: "POST",
+            body: JSON.stringify(userForm)
+        })
+        if (!result.ok)
+            throw new Error(`Response status: ${result.status}`);
+        return await result.json();
+    } catch (error) {
+        console.error(error);
+        return "";
     }
 }

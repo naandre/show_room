@@ -13,7 +13,8 @@
         <header id="header"></header>
         <main id="main-register">
             <h2>Register</h2>
-            <form method="post" id="register-form">
+            <form method="post" id="register-form"
+                enctype="multipart/form-data">
                 <div class="field-form">
                     <label for="name">Name</label>
                     <input type="text" name="name" id="name" required>
@@ -24,27 +25,32 @@
                 </div>
                 <div class="field-form">
                     <label for="email">Email</label>
-                    <input type="email" name="email" id="email" required>
+                    <input type="email" name="email" id="email"
+                        pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$"
+                        placeholder="ejemplo@correo.com" required>
                 </div>
                 <div class="field-form">
                     <label for="email">Username</label>
                     <input type="text" name="username" id="username" required>
                 </div>
                 <div class="field-form">
-                    <label for="password">Password</label>
-                    <input type="password" name="password" id="password"
+                    <label for="inputPassword">Password</label>
+                    <input type="password" name="inputPassword"
+                        id="inputPassword"
                         required>
                 </div>
                 <div class="field-form">
-                    <label for="confirmPassword">Confirm Password</label>
-                    <input type="password" name="confirmPassword"
-                        id="confirmPassword" required>
+                    <label for="inputConfirmPassword">Confirm Password</label>
+                    <input type="password" name="inputConfirmPassword"
+                        id="inputConfirmPassword" required>
+                    <span class="error-password">Password doesn't match</span>
                 </div>
                 <div class="field-form">
                     <label for="profile_image">Photo</label>
-                    <div class="img-profile">
+                    <div class="img-profile" id="div-photoRegister">
                         <i class="fa-solid fa-camera"></i>
                         <input type="file" name="profile_image"
+                            accept="image/*"
                             id="profile_image">
                         <img src alt id="prev_profile_img">
                     </div>

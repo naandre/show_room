@@ -6,6 +6,7 @@ db.serialize(() => {
         id TEXT PRIMARY KEY, 
         name TEXT NOT NULL, 
         lastName TEXT NOT NULL, 
+        userName TEXT NOT NULL,
         email TEXT NOT NULL, 
         profile_image TEXT NOT NULL
     )`);
