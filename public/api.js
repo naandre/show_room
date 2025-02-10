@@ -132,16 +132,13 @@ const getEntertainmentVideosByIdType = async (id, type) => {
 }
 
 const registerUser = async (userForm) => {
-    try {
-        let result = await fetch("user", {
-            method: "POST",
-            body: JSON.stringify(userForm)
-        })
-        if (!result.ok)
-            throw new Error(`Response status: ${result.status}`);
-        return await result.json();
-    } catch (error) {
-        console.error(error);
-        return "";
+    let response = await fetch("user", {
+        method: "POST",
+        body: userForm
+    });
+    if (!response.ok) {
+        return response.text().then(text => { throw new Error(text) })
     }
+    return await response.json();
+
 }

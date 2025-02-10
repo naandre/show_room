@@ -205,11 +205,50 @@ window.addEventListener("load", async () => {
 
 var saveUser = async (event) => {
     event.preventDefault();
-    const form = document.getElementById("register-form");
-    const formData = new FormData(form);
-    const formProps = Object.fromEntries(formData);
-    let results = await registerUser(formProps);
-    console.log(results);
+    try {
+        const form = document.getElementById("register-form");
+        const formData = new FormData(form);
+        let results = await registerUser(formData);
+        if (results) {
+            notifyMessage("Register made Sucessfully", "SUCESS");
+            form.reset();
+            document.getElementById("prev_profile_img").src = "";
+        }
+    } catch (error) {
+        let objMessage = JSON.parse(error.message);
+        notifyMessage(objMessage.error, 'ERROR');
+    }
+
+
+}
+
+var notifyMessage = (message, level = 'ERROR' | 'SUCESS') => {
+    let divNotification = document.getElementById("div_notification");
+    if (!divNotification) {
+        let tmpDivNotification = document.createElement("div");
+        tmpDivNotification.id = "div_notification";
+        document.getElementsByTagName("body")[0].appendChild(tmpDivNotification);
+        divNotification = document.getElementById("div_notification");
+    }
+    let iconMessage = level == "ERROR" ? '<i class="fa-solid fa-circle-exclamation"></i>' : '<i class="fa-solid fa-check"></i>';
+    divNotification.className = "notification";
+    divNotification.innerHTML = `
+    <div class="notification-container ${level.toLocaleLowerCase()}">
+        <div class="btn-close" id="close-notification">
+            <i class="fa-regular fa-rectangle-xmark"></i>
+        </div>
+        <div class="notification-message">
+            ${iconMessage}
+            <p>${message}</p>
+        </div>
+    </div>`;
+    const btnClose = document.getElementById("close-notification");
+    btnClose.onclick = closeNotification;
+}
+
+var closeNotification = () => {
+    let divNotification = document.getElementById("div_notification");
+    divNotification.classList.toggle("hide");
 }
 
 var getPhoto = () => {

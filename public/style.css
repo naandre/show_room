@@ -694,6 +694,17 @@ nav ul li {
     }
 }
 
+@keyframes fadeOut {
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        display: none;
+    }
+}
+
 @keyframes zoomIn {
     from {
         transform: scale(0.8);
@@ -741,4 +752,69 @@ nav ul li {
 
 .error-password.show {
     display: block;
+}
+
+.notification {
+    z-index: 1000;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #908c8c66;
+    font-size: 1.1em;
+
+    &.hide {
+        display: none;
+    }
+}
+
+.notification-container {
+    border-radius: 5px;
+    animation: fadeIn 2s ease-in-out;
+    display: grid;
+    grid-template-areas: ". close"
+        "msg msg";
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 0.5fr 1fr;
+    padding: 1%;
+    width: 25em;
+
+    &.error {
+        background-color: #c41919;
+    }
+
+
+    &.sucess {
+        background-color: greenyellow;
+    }
+
+    & .btn-close {
+        grid-area: close;
+        justify-self: right;
+
+        &:hover {
+            cursor: pointer;
+        }
+    }
+
+    & .notification-message {
+        grid-area: msg;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1em;
+
+        & i:hover {
+            cursor: auto;
+            color: inherit;
+        }
+
+        & p {
+            margin: 0;
+        }
+    }
 }
