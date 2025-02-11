@@ -21,7 +21,6 @@ userRouter.post("/", upload.single('profile_image'), async (req, res) => {
     try {
         const userController = new UserController();
         let userExists = await userController.getUserByEmailAndUserName(userData.email, userData.userName);
-        console.log(userExists);
         if (userExists)
             return res.status(400).send({ error: "User already registered" });
         let createdUser = await userController.createUser(userModel);
@@ -43,9 +42,22 @@ userRouter.post("/login", async (req, res) => {
         let login = await userController.login(userName, password);
         if (!login)
             return res.status(400).send({ error: "Fail credentials" });
-        return req.status(201).send({ user: JSON.stringify(login), message: "Login Succesful" });
+        req.session.user = {
+            id: login.id,
+            userName: login.userName,
+            email: login.email
+        }
+        return res.status(201).send({ success: true, message: "Login Succesful" });
     } catch (error) {
-
+        console.log(error);
+        return res.status(500).send({ error: error.message });
     }
-})
+});
+
+userRouter.post("/logout", (req, res) => {
+    req.session.destroy((err) => {
+        if (err) res.status(500).json({ message: "Error when making logout" });
+        else res.clearCookie('connect.sid').json({ success: true });
+    })
+});
 export default userRouter;

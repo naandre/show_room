@@ -818,3 +818,19 @@ nav ul li {
         }
     }
 }
+
+.no_auth {
+    display: none !important;
+}
+
+#divLogin.no_auth:hover {
+    display: block;
+}
+
+#divProfile.no_auth:hover {
+    display: none;
+}
+
+#divProfile.auth:hover {
+    display: block;
+}

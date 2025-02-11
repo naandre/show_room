@@ -8,7 +8,9 @@ db.serialize(() => {
         lastName TEXT NOT NULL, 
         userName TEXT NOT NULL,
         email TEXT NOT NULL, 
-        profile_image TEXT NOT NULL
+        profile_image TEXT NOT NULL,
+        created_date DEFAULT CURRENT_TIMESTAMP,
+        last_login_date DEFAULT CURRENT_TIMESTAMP
     )`);
 
     db.run(`CREATE TABLE IF NOT EXISTS Password_User (

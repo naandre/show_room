@@ -128,12 +128,15 @@ const processFavorites = async (id = undefined, type = undefined) => {
         }
     }
     let favorites = await getFavorites();
-    const divFavorite = document.getElementById("counterFav");
-    divFavorite.innerText = favorites.length;
-    if (isIndex)
-        favorites.forEach(favElement => {
-            changeStyleFav(favElement, "fa-regular", "fa-solid");
-        });
+    if (favorites) {
+        const divFavorite = document.getElementById("counterFav");
+        divFavorite.innerText = favorites.length;
+        if (isIndex)
+            favorites.forEach(favElement => {
+                changeStyleFav(favElement, "fa-regular", "fa-solid");
+            });
+    }
+
 }
 const changeStyleFav = (favElement, styleOld, styleNew) => {
     const card = document.getElementById(`${favElement.type}_${favElement.id}`);
@@ -176,31 +179,6 @@ const loadDetails = async () => {
     `
     main.innerHTML = htmlDetails;
 }
-
-window.addEventListener("load", async () => {
-    const path = window.location.pathname;
-    genresMovies = await getGenres("movie");
-    genresTV = await getGenres("tv");
-    loadHead();
-    loadFooter();
-    if (path === "/" || path.includes("index")) {
-        await drawTopRateds('movie');
-        await drawTopRateds('tv');
-    }
-    else if (path.includes("detail")) {
-        loadDetails();
-    }
-    else if (path.includes("register")) {
-        document.getElementById("inputPassword").addEventListener("input", () => validatePaswords());
-        document.getElementById("inputConfirmPassword").addEventListener("input", () => validatePaswords());
-        document.getElementById("div-photoRegister").addEventListener("click", () => getPhoto());
-        document.getElementById("profile_image").addEventListener("change", () => getFileName());
-        document.getElementById("register-form").addEventListener("submit", (e) => saveUser(e));
-    }
-    await processFavorites();
-    loadLogin();
-
-});
 
 
 var saveUser = async (event) => {
@@ -280,6 +258,52 @@ const loadLogin = () => {
     <p>New to Show Room <a href="register.html">Register</a></p>
     `;
     containerLogin.appendChild(divLogin);
+    document.getElementById("frm-login").addEventListener("submit", (e) => loginSubmit(e));
+}
+
+const loadProfile = () => {
+    const containerLogin = document.getElementById("login");
+    const divProfile = document.createElement("div");
+    divProfile.id = "divProfile";
+    divProfile.className = "popUpLogin";
+    divProfile.innerHTML = `
+    <h4>Profile</h4>
+    <form id="frm-login" method="POST">
+        <div class="field-form">
+            <label for="userName">User</label>
+            <input type="text" id="userName" name="userName" required/>
+        </div>
+        <div class="field-form">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required/>
+        </div>
+        <button type="submit" id="btn-login">Sign In</button>
+    </form>
+    <a href="#">Forgot password?</a>
+    <p>New to Show Room <a href="register.html">Register</a></p>
+    `;
+    containerLogin.appendChild(divProfile);
+}
+
+const loginSubmit = async (event) => {
+    event.preventDefault();
+    try {
+        const form = document.getElementById("frm-login");
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+        let results = await login(data);
+        if (results) {
+            notifyMessage("Login Sucessfully", "SUCESS");
+            form.reset();
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 3000);
+
+        }
+    } catch (error) {
+        let objMessage = JSON.parse(error.message);
+        notifyMessage(objMessage.error, 'ERROR');
+    }
 }
 
 const validatePaswords = () => {
@@ -294,7 +318,58 @@ const validatePaswords = () => {
     parentCFP.getElementsByClassName("error-password")[0].classList.add("show");
 }
 
+window.addEventListener("load", async () => {
+    const path = window.location.pathname;
+    genresMovies = await getGenres("movie");
+    genresTV = await getGenres("tv");
+    loadHead();
+    loadFooter();
+    if (path === "/" || path.includes("index")) {
+        await drawTopRateds('movie');
+        await drawTopRateds('tv');
+    }
+    else if (path.includes("detail")) {
+        loadDetails();
+    }
+    else if (path.includes("register")) {
+        document.getElementById("inputPassword").addEventListener("input", () => validatePaswords());
+        document.getElementById("inputConfirmPassword").addEventListener("input", () => validatePaswords());
+        document.getElementById("div-photoRegister").addEventListener("click", () => getPhoto());
+        document.getElementById("profile_image").addEventListener("change", () => getFileName());
+        document.getElementById("register-form").addEventListener("submit", (e) => saveUser(e));
+    }
+    await processFavorites();
+    loadLogin();
+    loadProfile();
+    validateAuth();
 
+});
+
+const validateAuth = async () => {
+    let isAuth = (await fetch("api/perfil"))?.id ?? undefined != undefined;
+    let addFav = document.querySelectorAll(".img-show i");
+    if (!isAuth) {
+        if (addFav.length > 0)
+            addFav.forEach(fav => {
+                fav.classList.add("no_auth");
+            });
+        document.getElementsByClassName("favorites")[0].classList.add("no_auth");
+        document.getElementById("divLogin").classList.add("no_auth");
+        document.getElementById("divProfile").classList.add("no_auth");
+        document.getElementById("divProfile").classList.remove("auth");
+
+    }
+    else {
+        if (addFav.length > 0)
+            addFav.forEach(fav => {
+                fav.classList.remove("no_auth");
+            });
+        document.getElementsByClassName("favorites")[0].classList.remove("no_auth");
+        document.getElementById("divLogin").classList.remove("no_auth");
+        document.getElementById("divProfile").classList.remove("no_auth");
+        document.getElementById("divProfile").classList.add("auth");
+    }
+}
 
 
 

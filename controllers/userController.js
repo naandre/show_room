@@ -26,7 +26,7 @@ class UserController {
         try {
             const sql = "SELECT * FROM User WHERE ID = ?";
             const user = await fetchFirst(this.db, sql, [id]);
-            return user | undefined;
+            return user;
 
         } catch (error) {
             throw new Error(error);
@@ -59,24 +59,30 @@ class UserController {
 
     getLastPassword = async (idUser) => {
         try {
-            sql = "SELECT TOP 1 password FROM Password_User WHERE user_id = ? ORDER BY date_created DESC"
+            let sql = "SELECT password FROM Password_User WHERE user_id = ? ORDER BY date_created DESC LIMIT 1"
             const lastPassword = await fetchFirst(this.db, sql, [idUser]);
-            return lastPassword | undefined;
+            return lastPassword;
         } catch (error) {
             throw new Error(error);
         }
     }
 
     login = async (userName, password) => {
-        const encryptedPassWord = createHmac('sha256', password);
+        const encryptedPassWord = createHmac('sha256', password).digest("hex");
         try {
+
             const user = await this.getUserByEmailAndUserName(undefined, userName);
             if (!user)
                 return;
             const lastPassword = await this.getLastPassword(user.id);
             if (!lastPassword)
                 return;
-            return encryptedPassWord === lastPassword ? user : undefined;
+            if (encryptedPassWord === lastPassword.password) {
+                let sql = "UPDATE User set last_login_date = CURRENT_TIMESTAMP WHERE id = ?";
+                await fetchFirst(this.db, sql, [user.id]);
+                return user;
+            }
+            return undefined;
 
         } catch (error) {
             throw new Error(error);
