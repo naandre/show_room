@@ -35,7 +35,7 @@ app.get('/', (req, res) => {
 });
 app.get('/api/perfil', (req, res) => {
     if (req.session.user) {
-        res.json(req.session.user);
+        res.status(200).send(JSON.stringify(req.session.user));
     } else {
         res.json({});
     }

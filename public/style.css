@@ -528,7 +528,8 @@ nav ul li {
 #login {
     position: relative;
 
-    &:hover .popUpLogin {
+    &:hover #divLogin.no_auth,
+    &:hover #divProfile.auth {
         display: block;
     }
 
@@ -819,18 +820,9 @@ nav ul li {
     }
 }
 
-.no_auth {
+
+#divProfile.no_auth:hover,
+.favorites.no_auth,
+.img-show i.no_auth {
     display: none !important;
-}
-
-#divLogin.no_auth:hover {
-    display: block;
-}
-
-#divProfile.no_auth:hover {
-    display: none;
-}
-
-#divProfile.auth:hover {
-    display: block;
 }

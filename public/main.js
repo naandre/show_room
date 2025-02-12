@@ -346,7 +346,8 @@ window.addEventListener("load", async () => {
 });
 
 const validateAuth = async () => {
-    let isAuth = (await fetch("api/perfil"))?.id ?? undefined != undefined;
+    let profile = await fetch("api/perfil");
+    let isAuth = (await profile.json())?.id ?? undefined != undefined;
     let addFav = document.querySelectorAll(".img-show i");
     if (!isAuth) {
         if (addFav.length > 0)
