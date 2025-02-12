@@ -157,3 +157,13 @@ const login = async (userForm) => {
     }
     return await response.json();
 }
+
+const logout = async () => {
+    let response = await fetch("user/logout", {
+        method: "POST"
+    });
+    if (!response.ok) {
+        throw new Error(await response.text());
+    }
+    return await response.json();
+}

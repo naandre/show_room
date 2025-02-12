@@ -533,6 +533,10 @@ nav ul li {
         display: block;
     }
 
+    & #divProfile.auth {
+        padding: 0.5em;
+    }
+
 }
 
 .popUpLogin {
@@ -570,6 +574,32 @@ nav ul li {
             border-color: var(--third-color);
             background-color: white;
             color: var(--third-color);
+        }
+    }
+
+    & ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 1em;
+
+        & li:hover {
+            color: var(--secondary-color);
+            cursor: pointer;
+        }
+
+        & .close_session {
+            display: flex;
+            justify-content: space-around;
+            border-style: solid;
+            border-radius: 5px;
+            border-color: var(--primary-color);
+            background-color: var(--secondary-color);
+
+            &:hover {
+                background-color: var(--primary-color);
+            }
         }
     }
 }
