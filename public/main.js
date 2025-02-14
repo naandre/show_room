@@ -38,12 +38,13 @@ const loadHead = async () => {
         <div id="login"><i class="fa-solid fa-user"></i></div>
     </div>
     <div class="search__container">
-        <input class="search__input" type="text" placeholder="Search">
+        <input class="search__input" id="txtSearch" type="text" placeholder="Search">
     </div>
     `;
     document.getElementById("home").addEventListener("click", () => {
         window.location = "index.html";
     });
+    document.getElementById("txtSearch").addEventListener("keyup", () => drawSearch());
 }
 
 const drawList = (list, page) => {
@@ -384,7 +385,63 @@ const validateAuth = async () => {
     }
 }
 
+const drawSearch = async () => {
+    const txtSearch = this.event.target;
+    if (this.event.keyCode === 13) {
+        let searchResults = await search(txtSearch.value);
+        if ((searchResults?.results?.length ?? 0) == 0)
+            return;
+        let cant = searchResults.results.length;
+        let pages = Math.ceil(cant / 5);
+        let searchContainer = document.getElementById("searchContainer");
+        if (!searchContainer) {
+            searchContainer = document.createElement("div");
+            searchContainer.id = "searchContainer";
+            document.getElementsByTagName("main")[0].appendChild(searchContainer);
+            searchContainer = document.getElementById("searchContainer");
+        }
+        let htmlItems = [];
+        let inputPages = "";
+        let lblPages = ""
+        for (let pageNumber = 1; pageNumber <= pages; pageNumber++) {
+            let indexStart = 5 * (pageNumber - 1);
+            let indexEnd = pageNumber < pages ? indexStart + 5 : undefined;
+            const pageResults = searchResults.results.slice(indexStart, indexEnd);
+            htmlItems.push(drawPageResult(pageResults));
+            inputPages = inputPages + `<input type="radio" name="input-pagination" id="pagina_${pageNumber}" ${pageNumber == 1 ? 'checked' : ''}>`
+            lblPages = lblPages + `<li><label for="pagina_${pageNumber}">${pageNumber}</label></li>`;
+        }
+        searchContainer.innerHTML = `
+        <div class="box-pagination">
+            ${inputPages}
+            <div class="box-pages">
+                <ul>
+                    ${htmlItems.join(" ")}
+                </ul>
+                <div class="btn-pagination">
+                    <ul>
+                    ${lblPages}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        `;
+    }
+}
 
-
+const drawPageResult = (elements) => {
+    let htmlItemsList = [];
+    elements.forEach(element => {
+        let htmlItem = `
+        <li class="card">${element.title || element.name}</li>
+        `;
+        htmlItemsList.push(htmlItem);
+    });
+    return `
+    <div class="page">
+        ${htmlItemsList.join(" ")}
+    </div>
+    `;
+}
 
 

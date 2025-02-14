@@ -110,7 +110,7 @@ const getFavoriteById = async (id, type) => {
 
 const getEntertainmentItemByIdType = async (id, type) => {
     try {
-        let result = await fetch(`entertainment/${id}/${type}`);
+        let result = await fetch(`entertainment/content/${id}/${type}`);
         if (!result.ok)
             throw new Error(await result.text());
         return await result.json();
@@ -128,6 +128,19 @@ const getEntertainmentVideosByIdType = async (id, type) => {
         return await result.json();
     } catch (error) {
         console.error(error);
+        return "";
+    }
+}
+
+
+const search = async (keyword) => {
+    try {
+        let response = await fetch(`entertainment/search/${keyword}`);
+        if (!response.ok)
+            throw new Error(await response.text());
+        return await response.json();
+    } catch (error) {
+        console.error("");
         return "";
     }
 }

@@ -856,3 +856,88 @@ nav ul li {
 .img-show i.no_auth {
     display: none !important;
 }
+
+#searchContainer {
+    & ul {
+        list-style: none;
+
+    }
+
+    & .box-pages>ul {
+        height: 10em;
+        overflow: hidden;
+    }
+
+    & .page {
+        justify-content: space-around;
+    }
+
+
+    & .page,
+    & .btn-pagination ul {
+        display: flex;
+        width: 99%;
+
+        & .card {
+            border-style: solid;
+            height: 9.7em;
+        }
+    }
+}
+
+#pagina_1:checked~.box-pages>ul {
+    transition: transform .7s ease-in-out;
+    transform: translateY(0px);
+}
+
+.btn-pagination {
+    width: 100%;
+    height: auto;
+    float: left;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    z-index: 10;
+    left: 0;
+    bottom: 0;
+    background-color: #FFF;
+}
+
+.btn-pagination ul {
+    width: auto;
+    height: auto;
+}
+
+.btn-pagination ul li {
+    width: 30px;
+    height: 30px;
+    float: left;
+    margin: 0 5px 0 0;
+    border: 0;
+}
+
+.btn-pagination ul li:last-child {
+    margin: 0;
+}
+
+.btn-pagination ul li label {
+    width: 100%;
+    height: 30px;
+    float: left;
+    text-align: center;
+    line-height: 30px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 1em;
+    color: #2E2929;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: background-color .25s ease-in-out;
+}
+
+.btn-pagination ul li label:hover {
+    background-color: #FF1493;
+    color: #FFF;
+}
